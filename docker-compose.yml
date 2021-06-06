@@ -1,0 +1,27 @@
+version: '3' 
+services:
+  api-users:
+    container_name: api-users
+    restart: always
+    build:
+      context: .
+    ports: 
+      - "7000:8000"
+  db:
+    image: mysql:5.7
+    container_name: db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Abc123**
+      MYSQL_DATABASE: sa
+      MYSQL_USER: grupo19
+      MYSQL_PASSWORD: Abc123**
+    ports:
+      - "6033:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+      - mysql_config:/etc/mysql
+volumes:
+  dbdata:
+  mysql_config:
+    

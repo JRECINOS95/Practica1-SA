@@ -1,0 +1,21 @@
+{
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    },
+    "eslint.alwaysShowStatus": true,
+    "eslint.debug": true,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "eslint.format.enable": true,
+    "eslint.trace.server": "verbose",
+    "eslint.packageManager": "yarn",
+    "eslint.probe": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+        "html",
+        "vue",
+        "markdown",
+        "json"
+    ]
+}
