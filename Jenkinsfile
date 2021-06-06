@@ -15,7 +15,6 @@ pipeline {
             steps {
                 echo 'Testing..'
                 sh '''
-					npm i
                     npm run test
 				'''
             }
@@ -23,6 +22,9 @@ pipeline {
         stage('Despliegue') {
             steps {
                 echo 'Deploying....'
+                sh '''
+                    docker-compose up -d --build
+				'''
             }
         }
     }
