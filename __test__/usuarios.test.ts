@@ -51,7 +51,7 @@ describe('Pruebas para Api de Usuarios', function () {
 
  test('get usuario correcto',  function (done) {
     request(app.app)
-     .get('/usuario/2')
+     .get('/usuario/1')
      .expect(200)
      .end(function (err: any, res: any) {
        if (err) return fail(err)
