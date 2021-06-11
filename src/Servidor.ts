@@ -5,14 +5,30 @@ import {PORT} from './utils/config'
 import routeUser from './routes/usuario.routes';
 import routeAuth from './routes/auth.routes';
 import { Server } from 'http';
+import cors from 'cors';
 
 export class Servidor {
 
     public app: Application;
     public server: Server;
 
+    private options: cors.CorsOptions = {
+        allowedHeaders: [
+          'Origin',
+          'X-Requested-With',
+          'Content-Type',
+          'Accept',
+          'X-Access-Token',
+        ],
+        credentials: true,
+        methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
+        origin: "*",
+        preflightContinue: false,
+      };
+
     constructor(private port?: number | string){
         this.app = express();
+        this.app.use(cors(this.options))
         this.settings();
         this.middlewares();
         this.routes();
