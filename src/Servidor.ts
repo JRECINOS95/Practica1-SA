@@ -31,7 +31,7 @@ export class Servidor {
     routes(){
         this.app.use(routesIndex);
         this.app.use('/usuario',routeUser);
-        this.app.use('/auth',routeAuth);
+        this.app.use('/login',routeAuth);
     }
 
     async listen(){

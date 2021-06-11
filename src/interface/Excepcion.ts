@@ -1,5 +1,5 @@
 export interface Excepcion {
     Code: number;
-    Message: string;
-    ErrorType: string;
+    Message: any;
+    ErrorType: any;
 }

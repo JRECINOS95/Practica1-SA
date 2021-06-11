@@ -2,63 +2,33 @@
 import { ResultadoEjecucion } from '../interface/ResultadoEjecucion';
 import { ResultQuery } from '../interface/ResultQuery';
 import {query, select} from '../utils/database';
-import { Email } from './Email';
-import { Telefono } from './Telefono';
 
 export class Usuario{
-    public ID:number;
+    public id:number;
     public primer_nombre:string;
     public segundo_nombre:string;
     public primer_apellido:string;
     public segundo_apellido:string;
     public status:string;
-    public idRol: number;
-    public dpi: string;
+    public rol: string;
     public username: string;
-    public creationDate:Date;
-    public creationUser:number;
-    public telefonos: Array<Telefono>;
-    public emails: Array<Email>;
+    public telefono: string;
+    public direccion: string;
 
     constructor(id:number,email:string,userCreate:number){
-        this.ID = id;
+        this.id = id;
         this.primer_nombre = '';
         this.segundo_nombre = '';
         this.primer_apellido = '';
         this.segundo_apellido = '';
         this.status = 'ACTIVO';
-        this.idRol = 0;
-        this.dpi = '';
+        this.rol = '';
         this.username = email;
-        this.creationDate = new Date();
-        this.creationUser = userCreate;
-        this.telefonos = new Array<Telefono>();
-        this.emails = new Array<Email>();
+        this.telefono = '';
+        this.direccion = '';
     }
 
-    /// FUNCIÓN QUE VALIDA LA EXISTENCIA DEL ROL QUE SE LE ASIGNA AL USUARIO
-    async existeRol(): Promise<ResultadoEjecucion>{
-        const validador:ResultadoEjecucion = {
-            error: null,
-            existe: false
-        }
-        try {
-            const result = await select(`SELECT 1 FROM rol WHERE id_rol =${this.idRol};`);
-            if(result.result.length>0){
-                validador.existe = true;
-                return validador;
-            }else{
-                validador.existe = false;
-                return validador;
-            }
-        } catch (error) {
-            console.log('Error en existeUsuario',error);
-            validador.error = error;
-            return validador;
-        }
-    } 
 
-    /// FUNCIÓN QUE VALIDA LA EXISTENCIA DEL USERNAME EN OTRO USUARIO
     async existeUsername(): Promise<ResultadoEjecucion>{
         const validador:ResultadoEjecucion = {
             error: null,
@@ -66,7 +36,7 @@ export class Usuario{
         }
 
         try {
-            const result = await select(`SELECT 1 FROM usuario WHERE username ='${this.username}' AND down_date is null;`);
+            const result = await select(`SELECT 1 FROM usuario WHERE username ='${this.username}';`);
             if(result.result.length>0){
                 validador.existe = true;
                 return validador;
@@ -81,8 +51,7 @@ export class Usuario{
         }
     }
     
-    /// FUNCIÓN QUE ACTUALIZA EL USUARIO
-    async updateUsuario(tipo:number):  Promise<ResultadoEjecucion>{
+    async updateUsuario(tipo:number,password:string):  Promise<ResultadoEjecucion>{
         const validador:ResultadoEjecucion = {
             error: null,
             existe: false
@@ -97,12 +66,12 @@ export class Usuario{
             }
 
             if(tipo===1){ // se da de baja
-                sql = `UPDATE usuario SET down_user = ${this.creationUser}, down_date = NOW() WHERE id_user = ${this.ID};`
+                sql = `UPDATE usuario SET status = 'INACTIVO' WHERE id_user = ${this.id};`
             }else if(tipo===2){ // se da de alta
-                sql = `UPDATE usuario SET down_user = null, down_date = null WHERE id_user = ${this.ID};`
+                sql = `UPDATE usuario SET status = 'ACTIVO' WHERE id_user = ${this.id};`
             }else if(tipo===3) { //se actualizan los campos
                 sql = `UPDATE usuario SET primer_nombre = '${this.primer_nombre}', segundo_nombre = '${this.segundo_nombre}', primer_apellido = '${this.primer_apellido}', `
-                sql += `segundo_apellido = '${this.segundo_apellido}', status= '${this.status}', id_rol= ${this.idRol}, dpi='${this.dpi}' WHERE id_user = ${this.ID};`;
+                sql += `segundo_apellido = '${this.segundo_apellido}', username='${this.username}', password='${password}', rol= '${this.rol}', telefono='${this.telefono}', direccion='${this.direccion}' WHERE id_user = ${this.id};`;
             }
             result = await query(sql);
 
@@ -123,24 +92,18 @@ export class Usuario{
         }
     }  
 
-    async guardarUsuario(telefono:string): Promise<ResultadoEjecucion>{
+    async guardarUsuario(password:string): Promise<ResultadoEjecucion>{
         const validador:ResultadoEjecucion = {
             error: null,
             existe: false
         }
         try {
-            let sql = `INSERT INTO usuario(primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, status, id_rol, dpi, username, creation_user) `;
-            sql += ` values ('${this.primer_nombre}','${this.segundo_nombre}','${this.primer_apellido}','${this.segundo_apellido}','${this.status}',${this.idRol},'${this.dpi}','${this.username}',${this.creationUser}) ;`;
+            let sql = `INSERT INTO usuario(primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, rol, username, password, telefono, direccion)  `;
+            sql += ` values ('${this.primer_nombre}','${this.segundo_nombre}','${this.primer_apellido}','${this.segundo_apellido}','${this.rol}','${this.username}','${password}','${this.telefono}','${this.direccion}') ;`;
             const result = await query(sql);
             if(result.result!==null){
                 if(result.result.affectedRows>0){
                     validador.ejecutado = true;
-                    this.ID = result.result.insertId;
-                    const mail:Email = new Email(0,this.username,this.creationUser,this.ID);
-                    const tel:Telefono = new Telefono(0,telefono,this.creationUser,this.ID);
-
-                    await mail.guardarCorreo();
-                    await tel.guardarTelefono();
                 }
                 return validador;
             }else{
@@ -156,32 +119,26 @@ export class Usuario{
         }
     }
 
-    async existeUsuario(filtro:Boolean=true): Promise<ResultadoEjecucion>{
+    async existeUsuario(): Promise<ResultadoEjecucion>{
         const validador:ResultadoEjecucion = {
             error: null,
             existe: false
         }
 
         try {
-            let query=`SELECT * FROM usuario WHERE id_user =${this.ID}`;
-            
-            if(filtro)
-                query+=' AND down_date is null;';
-            else
-                query+=';';
-                const result = await select(query);
+            let query=`SELECT * FROM usuario WHERE id_user =${this.id} AND status ='ACTIVO';`;
+            const result = await select(query);
             
             if(result.result.length>0){
-                this.idRol = result.result[0].id_rol;
-                this.primer_apellido = result.result[0].primer_apellido;
                 this.primer_nombre = result.result[0].primer_nombre;
-                this.segundo_apellido = result.result[0].segundo_apellido;
                 this.segundo_nombre = result.result[0].segundo_nombre;
+                this.primer_apellido = result.result[0].primer_apellido;
+                this.segundo_apellido = result.result[0].segundo_apellido;
                 this.status = result.result[0].status;
+                this.rol = result.result[0].rol;
                 this.username = result.result[0].username;
-                this.dpi = result.result[0].dpi;
-                this.creationDate = result.result[0].creation_date;
-                this.creationUser = result.result[0].creation_user;
+                this.telefono = result.result[0].telefono;
+                this.direccion = result.result[0].direccion;
                 validador.existe = true;
                 return validador;
             }else{
@@ -195,29 +152,4 @@ export class Usuario{
         }
     }
 
-    async loadMediosContactoUsuario() : Promise<true>{
-        //se cargan los telefonos
-        this.telefonos = new Array<Telefono>();
-        const resulTelefonos = await select(`select id_telefono from usuario_telefono WHERE id_user =${this.ID} AND down_date is null;`);
-        if(resulTelefonos.execute){
-            for (let element of resulTelefonos.result){
-                const tel:Telefono = new Telefono(element.id_telefono,'',0,0);
-                await tel.existeTelefono();
-                this.telefonos.push(tel);
-            }
-        }
-
-        //se cargan los correos
-        this.emails = new Array<Email>();
-        const resulMails = await select(`select id_correo from usuario_correo WHERE id_user =${this.ID} AND down_date is null;`);
-        if(resulMails.execute){
-            for (let element of resulMails.result){
-                const mail:Email = new Email(element.id_correo,'',0,0);
-                await mail.existeCorreo();
-                this.emails.push(mail);
-            }
-        }
-
-        return true;
-    }
 }

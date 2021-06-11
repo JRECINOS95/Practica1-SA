@@ -1,19 +1,6 @@
 import * as dotenv from "dotenv";
 
 dotenv.config();
-let path;
-switch (process.env.NODE_ENV) {
-  case "QA":
-    path = `${__dirname}/../../.env.qa`;
-    break;
-  case "Produccion":
-    path = `${__dirname}/../../.env.produccion`;
-    break;
-  default:
-    path = `${__dirname}/../../.env.desarrollo`;
-}
-
-dotenv.config({ path: path });
 
 export const PORT = process.env.PORT;
 export const SERVER_DB = process.env.SERVER_DB;
