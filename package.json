@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "jest --detectOpenHandles --forceExit",
-    "build": "tsc && cp .env.produccion ./dist/.env",
-    "build-dev": "tsc && cp .env.desarrollo ./dist/.env",
+    "build": "tsc && cp .env ./dist/.env",
     "dev": "nodemon src/index.ts --exec ts-node",
     "lint": "tsc --noEmit && eslint --quiet --fix"
   },
