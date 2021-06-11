@@ -17,3 +17,4 @@ CREATE TABLE usuario(
 INSERT INTO usuario(primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, rol, username, password, telefono, direccion) 
              VALUES('USUARIO','','ADMINISTRADOR','','ADMINISTRADOR','admin@admin.com','Abc123**','12345678','CIUDAD');
 
+ALTER TABLE usuario ADD validado BIT NOT NULL DEFAULT 1;

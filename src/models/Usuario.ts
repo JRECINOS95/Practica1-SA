@@ -14,6 +14,7 @@ export class Usuario{
     public username: string;
     public telefono: string;
     public direccion: string;
+    public validado: boolean;
 
     constructor(id:number,email:string,userCreate:number){
         this.id = id;
@@ -26,6 +27,7 @@ export class Usuario{
         this.username = email;
         this.telefono = '';
         this.direccion = '';
+        this.validado = false;
     }
 
 
@@ -98,8 +100,12 @@ export class Usuario{
             existe: false
         }
         try {
-            let sql = `INSERT INTO usuario(primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, rol, username, password, telefono, direccion)  `;
-            sql += ` values ('${this.primer_nombre}','${this.segundo_nombre}','${this.primer_apellido}','${this.segundo_apellido}','${this.rol}','${this.username}','${password}','${this.telefono}','${this.direccion}') ;`;
+            let valido = 0;
+            if(this.rol==='CLIENTE')
+                valido = 1;
+
+            let sql = `INSERT INTO usuario(primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, rol, username, password, telefono, direccion,validado)  `;
+            sql += ` values ('${this.primer_nombre}','${this.segundo_nombre}','${this.primer_apellido}','${this.segundo_apellido}','${this.rol}','${this.username}','${password}','${this.telefono}','${this.direccion}',${valido}) ;`;
             const result = await query(sql);
             if(result.result!==null){
                 if(result.result.affectedRows>0){
@@ -139,6 +145,7 @@ export class Usuario{
                 this.username = result.result[0].username;
                 this.telefono = result.result[0].telefono;
                 this.direccion = result.result[0].direccion;
+                this.validado = result.result[0].validado;
                 validador.existe = true;
                 return validador;
             }else{
