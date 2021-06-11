@@ -23,6 +23,8 @@ pipeline {
             steps {
                 echo 'Deploying....'
                 sh '''
+                    npm i
+                    npm run build
                     docker-compose up -d --build
 				'''
             }
