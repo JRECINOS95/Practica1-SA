@@ -12,7 +12,7 @@ export async function login(req:Request, res:Response): Promise<Response>{
 
     if(req.body.user && req.body.password) {
         try {
-            const result = await select(`SELECT id_user FROM usuario WHERE username='${req.body.user}' AND password='${req.body.password}' AND status = 'ACTIVO';`);
+            const result = await select(`SELECT id_user FROM usuario WHERE username='${req.body.user}' AND password='${req.body.password}' AND status != 'INACTIVO';`);
             if(result.execute){
                 if(result.result.length>0){
                     const user:Usuario = new Usuario(result.result[0].id_user,'',0);
