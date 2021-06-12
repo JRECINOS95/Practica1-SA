@@ -12,7 +12,7 @@ export async function getEditorialesPendientes(req:Request, res:Response): Promi
     };
     try {
         if(Object.keys(req.params).length===0){
-            const result = await select(`SELECT id_user FROM usuario WHERE status = 'ACTIVO' AND rol = 'EDITORIAL';`);
+            const result = await select(`SELECT id_user FROM usuario WHERE status <> 'INACTIVO' AND rol = 'EDITORIAL';`);
             const lista:Array<Usuario> = new Array<Usuario>();
 
             if(result.execute){
@@ -52,7 +52,7 @@ export async function getUsers(req:Request, res:Response): Promise<Response> {
     };
     try {
         if(Object.keys(req.params).length===0){
-            const result = await select(`SELECT id_user FROM usuario WHERE status = 'ACTIVO';`);
+            const result = await select(`SELECT id_user FROM usuario WHERE status != 'INACTIVO';`);
             const lista:Array<Usuario> = new Array<Usuario>();
 
             if(result.execute){

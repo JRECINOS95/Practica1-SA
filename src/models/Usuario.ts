@@ -75,7 +75,7 @@ export class Usuario{
                 sql = `UPDATE usuario SET primer_nombre = '${this.primer_nombre}', segundo_nombre = '${this.segundo_nombre}', primer_apellido = '${this.primer_apellido}', `
                 sql += `segundo_apellido = '${this.segundo_apellido}', username='${this.username}', password='${password}', rol= '${this.rol}', telefono='${this.telefono}', direccion='${this.direccion}' WHERE id_user = ${this.id};`;
             }else if(tipo===4){ // se da de alta
-                sql = `UPDATE usuario SET validado = 1 WHERE id_user = ${this.id};`
+                sql = `UPDATE usuario SET validado = 1, status = 'ACTIVO' WHERE id_user = ${this.id};`
             }
             result = await query(sql);
 
@@ -103,11 +103,14 @@ export class Usuario{
         }
         try {
             let valido = 1;
-            if(this.rol==='EDITORIAL')
+            if(this.rol==='EDITORIAL'){
                 valido = 0;
+                this.status = 'PENDIENTE';
+            }
+                
 
-            let sql = `INSERT INTO usuario(primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, rol, username, password, telefono, direccion,validado)  `;
-            sql += ` values ('${this.primer_nombre}','${this.segundo_nombre}','${this.primer_apellido}','${this.segundo_apellido}','${this.rol}','${this.username}','${password}','${this.telefono}','${this.direccion}',${valido}) ;`;
+            let sql = `INSERT INTO usuario(primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, rol, username, password, telefono, direccion,validado,status)  `;
+            sql += ` values ('${this.primer_nombre}','${this.segundo_nombre}','${this.primer_apellido}','${this.segundo_apellido}','${this.rol}','${this.username}','${password}','${this.telefono}','${this.direccion}',${valido}, '${this.status}' ) ;`;
             const result = await query(sql);
             if(result.result!==null){
                 if(result.result.affectedRows>0){
@@ -134,7 +137,7 @@ export class Usuario{
         }
 
         try {
-            let query=`SELECT * FROM usuario WHERE id_user =${this.id} AND status ='ACTIVO';`;
+            let query=`SELECT * FROM usuario WHERE id_user =${this.id} AND status !='INACTIVO';`;
             const result = await select(query);
             
             if(result.result.length>0){
