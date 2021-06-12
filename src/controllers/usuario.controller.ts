@@ -12,7 +12,7 @@ export async function getEditorialesPendientes(req:Request, res:Response): Promi
     };
     try {
         if(Object.keys(req.params).length===0){
-            const result = await select(`SELECT id_user FROM usuario WHERE status = 'ACTIVO' AND rol = 'EDITORIAL' and validado=0;`);
+            const result = await select(`SELECT id_user FROM usuario WHERE status = 'ACTIVO' AND rol = 'EDITORIAL';`);
             const lista:Array<Usuario> = new Array<Usuario>();
 
             if(result.execute){
