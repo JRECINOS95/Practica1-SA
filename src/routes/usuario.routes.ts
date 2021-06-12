@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getUsers, getUsuario, saveUsuario, updateUsuario, altaUsuario, bajaUsuario } from '../controllers/usuario.controller';
+import { getUsers, getUsuario, getEditorialesPendientes, saveUsuario, updateUsuario, altaUsuario, bajaUsuario, confirmarEditorial } from '../controllers/usuario.controller';
 
 const router = Router();
 
@@ -8,11 +8,17 @@ router.route('/')
         .post(saveUsuario)
         .put(updateUsuario);
 
+router.route('/editoriales')
+        .post(getEditorialesPendientes);
+
 router.route('/baja')
         .put(bajaUsuario);
 
 router.route('/alta')
         .put(altaUsuario);
+
+router.route('/confirmar')
+        .put(confirmarEditorial);
 
 router.route('/:usuario')
         .get(getUsuario);

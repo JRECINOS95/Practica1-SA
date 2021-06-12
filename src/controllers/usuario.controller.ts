@@ -3,7 +3,46 @@ import { Excepcion } from '../interface/Excepcion';
 import { Usuario } from '../models/Usuario';
 import { ResultadoEjecucion } from '../interface/ResultadoEjecucion';
 import { select } from '../utils/database';
-import { ResultQuery } from '../interface/ResultQuery';
+
+export async function getEditorialesPendientes(req:Request, res:Response): Promise<Response> {
+    const excepcion:Excepcion = {
+        Code: 999,
+        ErrorType: 'DES',
+        Message: ''
+    };
+    try {
+        if(Object.keys(req.params).length===0){
+            const result = await select(`SELECT id_user FROM usuario WHERE status = 'ACTIVO' AND rol = 'EDITORIAL' and validado=0;`);
+            const lista:Array<Usuario> = new Array<Usuario>();
+
+            if(result.execute){
+                for (let element of result.result){
+                    const user:Usuario = new Usuario(element.id_user,'',0);
+                    await user.existeUsuario();
+                    lista.push(user);
+                }
+                return res.json(lista);
+            }else{
+                excepcion.Message = 'Error al ejecutar la consulta'
+                excepcion.Code = 3
+                excepcion.ErrorType = 'NEG'
+            }
+        }else{
+            excepcion.Message = 'Request no valido!'
+            excepcion.Code = 1
+            excepcion.ErrorType = 'NEG'
+        }
+        
+    } catch(error) {
+        excepcion.Code = 999
+        excepcion.ErrorType = 'DES'
+        excepcion.Message = error
+    }
+
+    return res
+            .status(400)
+            .json(excepcion)
+} 
 
 export async function getUsers(req:Request, res:Response): Promise<Response> {
     const excepcion:Excepcion = {
@@ -48,6 +87,21 @@ export async function getUsers(req:Request, res:Response): Promise<Response> {
 export async function bajaUsuario(req:Request, res:Response): Promise<Response> {
     if(req.body.idUser){
         return await actualizarUsuario(req,res,1)
+    }else{
+        const excepcion:Excepcion = {
+            Code: 1,
+            ErrorType: 'DES',
+            Message: 'Request no Valido!'
+        }
+        return res
+            .status(400)
+            .json(excepcion)
+    }
+}
+
+export async function confirmarEditorial(req:Request, res:Response): Promise<Response> {
+    if(req.body.idUser){
+        return await actualizarUsuario(req,res,4)
     }else{
         const excepcion:Excepcion = {
             Code: 1,

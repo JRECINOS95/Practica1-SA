@@ -74,6 +74,8 @@ export class Usuario{
             }else if(tipo===3) { //se actualizan los campos
                 sql = `UPDATE usuario SET primer_nombre = '${this.primer_nombre}', segundo_nombre = '${this.segundo_nombre}', primer_apellido = '${this.primer_apellido}', `
                 sql += `segundo_apellido = '${this.segundo_apellido}', username='${this.username}', password='${password}', rol= '${this.rol}', telefono='${this.telefono}', direccion='${this.direccion}' WHERE id_user = ${this.id};`;
+            }else if(tipo===4){ // se da de alta
+                sql = `UPDATE usuario SET validado = 1 WHERE id_user = ${this.id};`
             }
             result = await query(sql);
 
@@ -100,9 +102,9 @@ export class Usuario{
             existe: false
         }
         try {
-            let valido = 0;
-            if(this.rol==='CLIENTE')
-                valido = 1;
+            let valido = 1;
+            if(this.rol==='EDITORIAL')
+                valido = 0;
 
             let sql = `INSERT INTO usuario(primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, rol, username, password, telefono, direccion,validado)  `;
             sql += ` values ('${this.primer_nombre}','${this.segundo_nombre}','${this.primer_apellido}','${this.segundo_apellido}','${this.rol}','${this.username}','${password}','${this.telefono}','${this.direccion}',${valido}) ;`;
