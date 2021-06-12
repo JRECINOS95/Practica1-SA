@@ -15,6 +15,7 @@ export class Usuario{
     public telefono: string;
     public direccion: string;
     public validado: boolean;
+    public password: string;
 
     constructor(id:number,email:string,userCreate:number){
         this.id = id;
@@ -28,6 +29,7 @@ export class Usuario{
         this.telefono = '';
         this.direccion = '';
         this.validado = false;
+        this.password = '';
     }
 
 
@@ -151,6 +153,7 @@ export class Usuario{
                 this.telefono = result.result[0].telefono;
                 this.direccion = result.result[0].direccion;
                 this.validado = result.result[0].validado;
+                this.password = result.result[0].password;
                 validador.existe = true;
                 return validador;
             }else{
