@@ -6,7 +6,11 @@ pipeline {
             steps {
                 echo 'Building..'
                 sh '''
+                    cd apiUsuarios
 					npm i
+                    npm run build
+                    cd ../apiLibros
+                    npm i
                     npm run build
 				'''
             }
@@ -15,6 +19,9 @@ pipeline {
             steps {
                 echo 'Testing..'
                 sh '''
+                    cd apiUsuarios
+                    npm run test
+                    cd ../apiLibros
                     npm run test
 				'''
             }
@@ -23,6 +30,11 @@ pipeline {
             steps {
                 echo 'Deploying....'
                 sh '''
+                    cd apiUsuarios
+                    npm i
+                    npm run build
+                    docker-compose up -d --build
+                    cd ../apiLibros
                     npm i
                     npm run build
                     docker-compose up -d --build
