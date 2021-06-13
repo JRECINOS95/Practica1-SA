@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getLibros, bajaLibro, altaLibro, saveLibro, updateLibro,getLibro, getGeneros } from '../controllers/libros.controller';
+import { getLibros, bajaLibro, altaLibro, saveLibro, updateLibro,getLibro, getGeneros, getStockLibros } from '../controllers/libros.controller';
 
 const router = Router();
 
@@ -8,6 +8,9 @@ router.route('/lista/:editorial')
 
 router.route('/genero')
         .get(getGeneros);
+
+router.route('/stock')
+        .get(getStockLibros);
 
 router.route('/baja')
         .put(bajaLibro);

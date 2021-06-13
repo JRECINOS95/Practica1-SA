@@ -27,6 +27,10 @@ CREATE TABLE libro(
     PRIMARY KEY (id_libro)
 );
 
+ALTER TABLE libro ADD precio NUMERIC(18,2) NOT NULL DEFAULT 0;
+ALTER TABLE libro
+ADD FOREIGN KEY (id_user) REFERENCES usuario(id_user);
+
 CREATE TABLE libro_genero(
 	id_genero_libro        INT      		NOT NULL AUTO_INCREMENT,
     id_libro			   INT				NOT NULL,
@@ -34,4 +38,7 @@ CREATE TABLE libro_genero(
     PRIMARY KEY (id_genero_libro)
 );
 
-ALTER TABLE libro ADD precio NUMERIC(18,2) NOT NULL DEFAULT 0;
+ALTER TABLE libro_genero
+ADD FOREIGN KEY (id_libro) REFERENCES libro(id_libro);
+ALTER TABLE libro_genero
+ADD FOREIGN KEY (id_genero) REFERENCES genero_literario(id_genero);

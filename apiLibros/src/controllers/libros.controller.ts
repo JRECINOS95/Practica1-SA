@@ -36,6 +36,39 @@ export async function getGeneros(req:Request, res:Response): Promise<Response> {
             .json(excepcion)
 }
 
+export async function getStockLibros(req:Request, res:Response): Promise<Response> {
+    const excepcion:Excepcion = {
+        Code: 999,
+        ErrorType: 'DES',
+        Message: ''
+    };
+    try {
+            const result = await select(`SELECT id_libro FROM libro WHERE status != 'INACTIVO' AND stock>0;`);
+            const lista:Array<Libro> = new Array<Libro>();
+
+            if(result.execute){
+                for (let element of result.result){
+                    const libro:Libro = new Libro(element.id_libro,'');
+                    await libro.existeLibro();
+                    lista.push(libro);
+                }
+                return res.json(lista);
+            }else{
+                excepcion.Message = 'Error al ejecutar la consulta'
+                excepcion.Code = 3
+                excepcion.ErrorType = 'NEG'
+            }       
+    } catch(error) {
+        excepcion.Code = 999
+        excepcion.ErrorType = 'DES'
+        excepcion.Message = error
+    }
+
+    return res
+            .status(400)
+            .json(excepcion)
+}
+
 export async function getLibros(req:Request, res:Response): Promise<Response> {
     const excepcion:Excepcion = {
         Code: 999,
