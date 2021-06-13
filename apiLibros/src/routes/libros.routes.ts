@@ -1,10 +1,13 @@
 import { Router } from 'express';
-import { getLibros, bajaLibro, altaLibro, saveLibro, updateLibro,getLibro } from '../controllers/libros.controller';
+import { getLibros, bajaLibro, altaLibro, saveLibro, updateLibro,getLibro, getGeneros } from '../controllers/libros.controller';
 
 const router = Router();
 
 router.route('/lista/:editorial')
         .get(getLibros);
+
+router.route('/genero')
+        .get(getGeneros);
 
 router.route('/baja')
         .put(bajaLibro);

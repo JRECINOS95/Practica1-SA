@@ -3,6 +3,38 @@ import { Excepcion } from '../interface/Excepcion';
 import { Libro } from '../models/Libro';
 import { ResultadoEjecucion } from '../interface/ResultadoEjecucion';
 import { select } from '../utils/database';
+import { Genero } from '../models/Genero';
+
+export async function getGeneros(req:Request, res:Response): Promise<Response> {
+    const excepcion:Excepcion = {
+        Code: 999,
+        ErrorType: 'DES',
+        Message: ''
+    };
+    try {
+            const result = await select(`SELECT * FROM genero_literario;`);
+            const lista:Array<Genero> = new Array<Genero>();
+            if(result.execute){
+                for (let element of result.result){
+                    const genero:Genero = new Genero(element.id_genero,element.nombre);
+                    lista.push(genero);
+                }
+                return res.json(lista);
+            }else{
+                excepcion.Message = 'Error al ejecutar la consulta'
+                excepcion.Code = 3
+                excepcion.ErrorType = 'NEG'
+            }
+    } catch(error) {
+        excepcion.Code = 999
+        excepcion.ErrorType = 'DES'
+        excepcion.Message = error
+    }
+
+    return res
+            .status(400)
+            .json(excepcion)
+}
 
 export async function getLibros(req:Request, res:Response): Promise<Response> {
     const excepcion:Excepcion = {
@@ -105,6 +137,7 @@ async function actualizarLibro(req:Request, res:Response, op: number): Promise<R
                     libro.nombre = req.body.nombre
                     libro.url = req.body.url;
                     libro.stock = req.body.stock;
+                    libro.autor = req.body.autor;
                 }
                 const result = await libro.updateLibro(op);
                 if(result.ejecutado){
