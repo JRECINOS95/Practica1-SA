@@ -138,6 +138,7 @@ async function actualizarLibro(req:Request, res:Response, op: number): Promise<R
                     libro.url = req.body.url;
                     libro.stock = req.body.stock;
                     libro.autor = req.body.autor;
+                    libro.generos = req.body.generos;
                 }
                 const result = await libro.updateLibro(op);
                 if(result.ejecutado){

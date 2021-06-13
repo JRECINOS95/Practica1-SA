@@ -2,6 +2,7 @@
 import { ResultadoEjecucion } from '../interface/ResultadoEjecucion';
 import { ResultQuery } from '../interface/ResultQuery';
 import {query, select} from '../utils/database';
+import { Genero } from './Genero';
 
 export class Libro{
     public id:number;
@@ -11,7 +12,7 @@ export class Libro{
     public stock:number;
     public status:string;
     public idUser:number;
-
+    public generos:Array<Genero>;
     constructor(id:number,nombre:string){
         this.id = id;
         this.nombre = nombre;
@@ -20,6 +21,15 @@ export class Libro{
         this.status = 'ACTIVO';
         this.stock = 0;
         this.idUser = 0;
+        this.generos = new Array<Genero>();
+    }
+
+    async saveGeneros(idLibro:number): Promise<Boolean> {
+        await query(`DELETE from  libro_genero WHERE id_libro = ${idLibro};`);
+        for (const element of this.generos){
+            await query(`INSERT INTO libro_genero(id_libro,id_genero) VALUES(${idLibro},${element.id});`);
+        }
+        return true;
     }
 
     async updateLibro(tipo:number):  Promise<ResultadoEjecucion>{
@@ -45,7 +55,9 @@ export class Libro{
             }
 
             result = await query(sql);
-
+            if(tipo===3){
+                this.saveGeneros(this.id);
+            }
             if(result.result!==null){
                 if(result.result.affectedRows>0){
                     validador.ejecutado = true;
@@ -74,6 +86,7 @@ export class Libro{
             const result = await query(sql);
             if(result.result!==null){
                 if(result.result.affectedRows>0){
+                    await this.saveGeneros(result.result.insertId);
                     validador.ejecutado = true;
                 }
                 return validador;
@@ -107,6 +120,17 @@ export class Libro{
                 this.stock = result.result[0].stock;
                 this.status = result.result[0].status;
                 this.autor = result.result[0].autor;
+
+                const rGeneros = await select(`SELECT id_genero FROM libro_genero where id_libro = ${this.id};`);
+                const lista:Array<Genero> = new Array<Genero>();
+                if(result.execute){
+                    for (let element of rGeneros.result){
+                        const rGenero = await select(`SELECT nombre FROM genero_literario where id_genero = ${element.id_genero};`);
+                        const genero:Genero = new Genero(element.id_genero,rGenero.result[0].nombre);
+                        lista.push(genero);
+                    }
+                    this.generos = lista;
+                }
                 validador.existe = true;
                 return validador;
             }else{
