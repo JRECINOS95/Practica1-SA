@@ -33,3 +33,5 @@ CREATE TABLE libro_genero(
     id_genero			   INT				NOT NULL,
     PRIMARY KEY (id_genero_libro)
 );
+
+ALTER TABLE libro ADD precio NUMERIC(18,2) NOT NULL DEFAULT 0;

@@ -10,6 +10,7 @@ export class Libro{
     public autor:string;
     public url:string;
     public stock:number;
+    public precio:number;
     public status:string;
     public idUser:number;
     public generos:Array<Genero>;
@@ -21,6 +22,7 @@ export class Libro{
         this.status = 'ACTIVO';
         this.stock = 0;
         this.idUser = 0;
+        this.precio = 0;
         this.generos = new Array<Genero>();
     }
 
@@ -51,7 +53,7 @@ export class Libro{
             }else if(tipo===2){ // se da de alta
                 sql = `UPDATE libro SET status = 'ACTIVO' WHERE id_libro = ${this.id};`
             }else if(tipo===3) { //se actualizan los campos
-                sql = `UPDATE libro SET nombre = '${this.nombre}', autor = '${this.autor}', url = '${this.url}', stock = ${this.stock} WHERE id_libro = ${this.id};`;
+                sql = `UPDATE libro SET nombre = '${this.nombre}', autor = '${this.autor}', url = '${this.url}', stock = ${this.stock}, precio = ${this.precio}  WHERE id_libro = ${this.id};`;
             }
 
             result = await query(sql);
@@ -81,8 +83,8 @@ export class Libro{
             existe: false
         }
         try {
-            let sql = `INSERT INTO libro(nombre, url, id_user, stock, autor) `;
-            sql += ` values ('${this.nombre}','${this.url}',${this.idUser}, ${this.stock}, '${this.autor}') ;`;
+            let sql = `INSERT INTO libro(nombre, url, id_user, stock, autor, precio) `;
+            sql += ` values ('${this.nombre}','${this.url}',${this.idUser}, ${this.stock}, '${this.autor}', ${this.precio}) ;`;
             const result = await query(sql);
             if(result.result!==null){
                 if(result.result.affectedRows>0){
@@ -120,6 +122,7 @@ export class Libro{
                 this.stock = result.result[0].stock;
                 this.status = result.result[0].status;
                 this.autor = result.result[0].autor;
+                this.precio = result.result[0].precio;
 
                 const rGeneros = await select(`SELECT id_genero FROM libro_genero where id_libro = ${this.id};`);
                 const lista:Array<Genero> = new Array<Genero>();

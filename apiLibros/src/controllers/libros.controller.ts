@@ -139,6 +139,7 @@ async function actualizarLibro(req:Request, res:Response, op: number): Promise<R
                     libro.stock = req.body.stock;
                     libro.autor = req.body.autor;
                     libro.generos = req.body.generos;
+                    libro.precio = req.body.precio;
                 }
                 const result = await libro.updateLibro(op);
                 if(result.ejecutado){
@@ -185,6 +186,7 @@ export async function saveLibro(req:Request, res:Response): Promise<Response> {
             libro.stock = req.body.stock;
             libro.autor = req.body.autor;
             libro.generos = req.body.generos;
+            libro.precio = req.body.precio;
             const result = await libro.guadarLibro();
                 if(result.ejecutado){
                     return res.json({
