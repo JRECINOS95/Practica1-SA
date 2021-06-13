@@ -184,6 +184,7 @@ export async function saveLibro(req:Request, res:Response): Promise<Response> {
             libro.idUser = req.body.idUser;
             libro.stock = req.body.stock;
             libro.autor = req.body.autor;
+            libro.generos = req.body.generos;
             const result = await libro.guadarLibro();
                 if(result.ejecutado){
                     return res.json({
