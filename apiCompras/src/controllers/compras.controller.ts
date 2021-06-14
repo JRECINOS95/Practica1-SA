@@ -1,6 +1,6 @@
 import {Request , Response} from 'express';
 import { Excepcion } from '../interface/Excepcion';
-import { Libro } from '../models/Libro';
+import { Transaccion } from '../models/Transaccion';
 import { ResultadoEjecucion } from '../interface/ResultadoEjecucion';
 import { select } from '../utils/database';
 
@@ -14,24 +14,26 @@ export async function registrarCompra(req:Request, res:Response): Promise<Respon
 
     try{
         
-        if(req.body.idLibro && req.body.idCliente && req.body.cantidad && req.body.tipoPago){
-            let libro: Libro = new Libro(0,req.body.nombre);
-            libro.nombre = req.body.nombre
-            libro.url = req.body.url;
-            libro.idUser = req.body.idUser;
-            libro.stock = req.body.stock;
-            libro.autor = req.body.autor;
-            libro.precio = req.body.precio;
-            const result = await libro.guadarLibro();
+        if(req.body.idLibro && req.body.idUser && req.body.cantidad && req.body.tipoPago){
+            let transaccion: Transaccion = new Transaccion(0,req.body.idLibro,req.body.idUser);
+            transaccion.tarjeta = req.body.tarjeta;
+            transaccion.tipoPago = req.body.tipoPago;
+            transaccion.cantidad = req.body.cantidad;
+            transaccion.cvv = req.body.cvv;
+            transaccion.valorFinal = req.body.valorFinal;
+            transaccion.valorImpuestos = req.body.valorImpuestos;
+            transaccion.valorUnitario = req.body.valorUnitario;
+
+            const result = await transaccion.guardarTransaccion(req.body.direccion);
                 if(result.ejecutado){
                     return res.json({
                         Code: 0,
-                        Message: 'Libro almacenado correctamente'
+                        Message: 'Transaccion almacenada correctamente'
                     });
                 }
                 excepcion.Code = 1
                 excepcion.ErrorType = 'DES'
-                excepcion.Message = 'El libro no se ha guardado, intente nuevamente'
+                excepcion.Message = 'La transaccion no se ha guardado, intente nuevamente'
         }else{
             excepcion.Code = 1
             excepcion.ErrorType = 'DES'
