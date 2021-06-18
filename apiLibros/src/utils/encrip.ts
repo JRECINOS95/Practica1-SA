@@ -1,6 +1,5 @@
 import * as CryptoJS from 'crypto-js';
 
-
 const key = CryptoJS.enc.Utf8.parse('4512631236589784');
 const iv = CryptoJS.enc.Utf8.parse('4512631236589784');
 
