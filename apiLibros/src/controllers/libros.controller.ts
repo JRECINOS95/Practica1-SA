@@ -5,6 +5,7 @@ import { ResultadoEjecucion } from '../interface/ResultadoEjecucion';
 import { select } from '../utils/database';
 import { Genero } from '../models/Genero';
 
+
 export async function getGeneros(req:Request, res:Response): Promise<Response> {
     const excepcion:Excepcion = {
         Code: 999,
