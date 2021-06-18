@@ -4,6 +4,7 @@ import { Usuario } from '../models/Usuario';
 import { ResultadoEjecucion } from '../interface/ResultadoEjecucion';
 import { select } from '../utils/database';
 
+
 export async function getEditorialesPendientes(req:Request, res:Response): Promise<Response> {
     const excepcion:Excepcion = {
         Code: 999,
