@@ -2,7 +2,6 @@ import { createPool } from 'mysql2/promise';
 import {SERVER_DB, DB_DEFAULT, DB_PASS, DB_PORT, DB_USER} from './config';
 import { ResultQuery } from '../interface/ResultQuery'
 
-
 async function connect() {
     const connection = await createPool({
         host: SERVER_DB,

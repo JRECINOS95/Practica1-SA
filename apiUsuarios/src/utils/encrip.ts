@@ -14,7 +14,6 @@ export function encryptUsingAES256(value:string) {
     return encrypted.toString();
 }
 
-
 export function decryptUsingAES256(decString:string) {
     var decrypted = CryptoJS.AES.decrypt(decString, key, {
         keySize: 128 / 8,
