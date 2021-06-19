@@ -117,6 +117,7 @@ export class Usuario{
             if(result.result!==null){
                 if(result.result.affectedRows>0){
                     validador.ejecutado = true;
+                    this.id = result.result.insertId;
                 }
                 return validador;
             }else{
