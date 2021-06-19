@@ -39,7 +39,7 @@ describe('Pruebas para Api de Libros', function () {
      })
  })
 
- test('get usuario incorrecto',  function (done) {
+ test('get libro incorrecto',  function (done) {
     request(app.app)
      .get('/libro/100')
      .expect(400)
@@ -49,7 +49,7 @@ describe('Pruebas para Api de Libros', function () {
      })
  })
 
- test('get usuario correcto',  function (done) {
+ test('get libro correcto',  function (done) {
     request(app.app)
      .get('/libro/1')
      .expect(200)
