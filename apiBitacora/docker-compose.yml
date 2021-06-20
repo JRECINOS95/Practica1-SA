@@ -1,0 +1,9 @@
+version: '3' 
+services:
+  api-compras:
+    container_name: api-bitacoras
+    restart: always
+    build:
+      context: .
+    ports: 
+      - "6060:8000"

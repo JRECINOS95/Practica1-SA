@@ -2,11 +2,9 @@ import express, { Application } from 'express';
 import morgan from 'morgan';
 import routesIndex from './routes/index.routes';
 import {PORT} from './utils/config'
-import routesLibros from './routes/libros.routes';
-import routesSolicitudes from './routes/solicitudes.routes';
+import routesCompras from './routes/compras.routes';
 import { Server } from 'http';
 import cors from 'cors';
-var bodyParser = require('body-parser');
 
 export class Servidor {
 
@@ -30,8 +28,6 @@ export class Servidor {
     constructor(private port?: number | string){
         this.app = express();
         this.app.use(cors(this.options))
-        this.app.use(bodyParser.json({limit: '50mb'}));
-        this.app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
         this.settings();
         this.middlewares();
         this.routes();
@@ -49,8 +45,7 @@ export class Servidor {
 
     routes(){
         this.app.use(routesIndex);
-        this.app.use('/libro',routesLibros);
-        this.app.use('/solicitud',routesSolicitudes);
+        this.app.use('/compra',routesCompras);
     }
 
     async listen(){

@@ -1,0 +1,8 @@
+{
+    "semi": false, // punto y coma al final de cada declaración
+    "printWidth": 100, // largo máximo de una línea de código
+    "singleQuote": true,  // comillas simples
+    "doubleQuote": false,
+    "trailingComma": "none" // comas en objetos o arrays multi líneas
+}
+ 

@@ -15,6 +15,9 @@ pipeline {
                     cd ../apiCompras
                     npm i
                     npm run build
+                    cd ../apiBitacora
+                    npm i
+                    npm run build
 				'''
             }
         }
@@ -27,6 +30,8 @@ pipeline {
                     cd ../apiLibros
                     npm run test
                     cd ../apiCompras
+                    npm run test
+                    cd ../apiBitacora
                     npm run test
 				'''
             }
@@ -44,6 +49,10 @@ pipeline {
                     npm run build
                     docker-compose up -d --build
                     cd ../apiCompras
+                    npm i
+                    npm run build
+                    docker-compose up -d --build
+                    cd ../apiBitacora
                     npm i
                     npm run build
                     docker-compose up -d --build

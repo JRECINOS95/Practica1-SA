@@ -42,3 +42,23 @@ ALTER TABLE libro_genero
 ADD FOREIGN KEY (id_libro) REFERENCES libro(id_libro);
 ALTER TABLE libro_genero
 ADD FOREIGN KEY (id_genero) REFERENCES genero_literario(id_genero);
+
+CREATE TABLE solicitud_libro (
+	solicitud_libro	        INT      		NOT NULL AUTO_INCREMENT,
+    nombre		            VARCHAR(40)   	NOT NULL,
+    autor					VARCHAR(40)   	NOT NULL,
+	fec_primera_publicacion	VARCHAR(20)     NOT NULL,
+    nombre_archivo			VARCHAR(200)    NULL,
+    status                  VARCHAR(20)    	NOT NULL DEFAULT 'ACTIVO',
+    id_cliente				INT				NOT NULL,
+    id_editorial			INT				NULL,
+    fecha_aceptacion		datetime		NULL,
+    PRIMARY KEY (solicitud_libro)
+);
+
+
+ALTER TABLE solicitud_libro
+ADD FOREIGN KEY (id_cliente) REFERENCES usuario(id_user);
+
+ALTER TABLE solicitud_libro
+ADD FOREIGN KEY (id_editorial) REFERENCES usuario(id_user);
