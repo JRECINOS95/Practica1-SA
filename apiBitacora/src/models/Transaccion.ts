@@ -28,6 +28,7 @@ export class Transaccion{
             sql += ` values (${this.idLibro},${this.idUser},'${this.operacion}') ;`;
             const result = await query(sql);
             if(result.result!==null){
+                validador.ejecutado = true;
                 return validador;
             }else{
                 validador.ejecutado = false;

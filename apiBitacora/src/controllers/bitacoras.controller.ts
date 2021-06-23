@@ -55,7 +55,7 @@ export async function registrarBitacora(req:Request, res:Response): Promise<Resp
                 }
                 excepcion.Code = 1
                 excepcion.ErrorType = 'DES'
-                excepcion.Message = 'La transaccion no se ha guardado, intente nuevamente'
+                excepcion.Message = 'La transaccion no se ha guardado, intente nuevamente, '+result.error;
         }else{
             excepcion.Code = 1
             excepcion.ErrorType = 'DES'
