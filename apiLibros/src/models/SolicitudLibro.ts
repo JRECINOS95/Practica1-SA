@@ -2,7 +2,8 @@
 import { ResultadoEjecucion } from '../interface/ResultadoEjecucion';
 import { ResultQuery } from '../interface/ResultQuery';
 import {query, select} from '../utils/database';
-var fs = require("fs");
+import fs from 'fs';
+import { Base64 } from 'js-base64';
 
 export class SolicitudLibro{
     public id:number;
@@ -67,18 +68,20 @@ export class SolicitudLibro{
         }
     }  
 
-    async guadarSolicitudLibro(): Promise<ResultadoEjecucion>{
+    async guadarSolicitudLibro(data:string): Promise<ResultadoEjecucion>{
         const validador:ResultadoEjecucion = {
             error: null,
             existe: false
         }
         try {
 
-           
-
             let nombreArchivo = '';
             if(this.file!==''){
-                nombreArchivo = this.idUser+'_'+this.nombre+'.pdf';
+                nombreArchivo = this.file;
+                var bin = Base64.atob(data);
+                fs.writeFile(nombreArchivo, bin, {encoding: 'base64'}, function(err) {
+                    console.log('File created');
+                });
             }
             let sql = `INSERT INTO solicitud_libro(nombre, autor, fec_primera_publicacion, nombre_archivo, id_cliente) `;
             sql += ` values ('${this.nombre}','${this.autor}','${this.fechaPublicacion}', '${nombreArchivo}', ${this.idUser}) ;`;
