@@ -2,7 +2,7 @@ import express, { Application } from 'express';
 import morgan from 'morgan';
 import routesIndex from './routes/index.routes';
 import {PORT} from './utils/config'
-import routesCompras from './routes/compras.routes';
+import routesBitacoras from './routes/bitacoras.routes';
 import { Server } from 'http';
 import cors from 'cors';
 
@@ -45,7 +45,7 @@ export class Servidor {
 
     routes(){
         this.app.use(routesIndex);
-        this.app.use('/compra',routesCompras);
+        this.app.use('/bitacora',routesBitacoras);
     }
 
     async listen(){
