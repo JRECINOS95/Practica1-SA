@@ -9,3 +9,4 @@ export const DB_USER = process.env.DB_USER;
 export const DB_PASS = process.env.DB_PASS;
 export const DB_DEFAULT = process.env.DB_DEFAULT;
 export const PORT_TEST = process.env.PORT_TEST;
+export const URL_BITACORA = process.env.URL_BITACORA || 'http://34.72.218.226:6060/bitacora';

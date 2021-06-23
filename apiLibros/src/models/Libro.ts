@@ -2,6 +2,7 @@
 import { ResultadoEjecucion } from '../interface/ResultadoEjecucion';
 import { ResultQuery } from '../interface/ResultQuery';
 import {query, select} from '../utils/database';
+import { Transaccion } from './Bitacora';
 import { Genero } from './Genero';
 
 export class Libro{
@@ -47,13 +48,16 @@ export class Libro{
                 execute: false
 
             }
-
+            const bitacora: Transaccion = new Transaccion(this.id,this.idUser,'UPDATE');
             if(tipo===1){ // se da de baja
                 sql = `UPDATE libro SET status = 'INACTIVO' WHERE id_libro = ${this.id};`
+                bitacora.operacion = 'ELIMINACION';
             }else if(tipo===2){ // se da de alta
                 sql = `UPDATE libro SET status = 'ACTIVO' WHERE id_libro = ${this.id};`
+                bitacora.operacion = 'ACTIVACION';
             }else if(tipo===3) { //se actualizan los campos
                 sql = `UPDATE libro SET nombre = '${this.nombre}', autor = '${this.autor}', url = '${this.url}', stock = ${this.stock}, precio = ${this.precio}  WHERE id_libro = ${this.id};`;
+                bitacora.operacion = 'ACTUALIZACION';
             }
 
             result = await query(sql);
@@ -63,6 +67,7 @@ export class Libro{
             if(result.result!==null){
                 if(result.result.affectedRows>0){
                     validador.ejecutado = true;
+                    bitacora.enviarBitacora();
                 }
                 return validador;
             }else{
@@ -89,6 +94,8 @@ export class Libro{
             if(result.result!==null){
                 if(result.result.affectedRows>0){
                     await this.saveGeneros(result.result.insertId);
+                    const bitacora: Transaccion = new Transaccion(result.result.insertId,this.idUser,'CREACIÓN');
+                    bitacora.enviarBitacora();
                     validador.ejecutado = true;
                 }
                 return validador;
