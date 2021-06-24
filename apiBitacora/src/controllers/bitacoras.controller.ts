@@ -10,7 +10,7 @@ export async function getTransacciones(req:Request, res:Response): Promise<Respo
         Message: ''
     };
     try {
-        const result = await select(`SELECT id_bitacora, l.nombre as libro, u.primer_nombre as editorial, b.creation_date as fecha  FROM bitacora_libro b INNER JOIN libro l on l.id_libro = b.id_libro INNER JOIN usuario u ON u.id_user = b.id_user  ;`);
+        const result = await select(`SELECT id_bitacora, l.nombre as libro, u.primer_nombre as editorial, b.creation_date as fecha, b.operacion  FROM bitacora_libro b INNER JOIN libro l on l.id_libro = b.id_libro INNER JOIN usuario u ON u.id_user = b.id_user  ;`);
         const lista:Array<any> = new Array<any>();
 
         if(result.execute){
@@ -20,7 +20,8 @@ export async function getTransacciones(req:Request, res:Response): Promise<Respo
                     id: element.id_bitacora,
                     libro: element.libro,
                     editorial: element.editorial,
-                    fecha: element.fecha
+                    fecha: element.fecha,
+                    operacion: element.operacion
                 });
             }
             return res.json(lista);
