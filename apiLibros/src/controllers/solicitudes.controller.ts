@@ -134,7 +134,7 @@ export async function saveSolicitud(req: Request, res: Response): Promise<Respon
 
     try {
 
-        if (req.body.nombre && req.body.autor && req.body.file && req.body.fecha) {
+        if (req.body.nombre && req.body.autor && req.body.fecha) {
             let solicitud: SolicitudLibro = new SolicitudLibro(0, req.body.nombre);
             solicitud.nombre = req.body.nombre
             solicitud.file = req.body.file;

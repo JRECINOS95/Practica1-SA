@@ -3,7 +3,8 @@ import { ResultadoEjecucion } from '../interface/ResultadoEjecucion';
 import { ResultQuery } from '../interface/ResultQuery';
 import {query, select} from '../utils/database';
 import fs from 'fs';
-import { Base64 } from 'js-base64';
+const { exec } = require('child_process');
+
 
 export class SolicitudLibro{
     public id:number;
@@ -15,6 +16,7 @@ export class SolicitudLibro{
     public idUser:number;
     public idEditorial: number;
     public fechaAceptacion:string;
+    public urlDownload:string;
 
     constructor(id:number,nombre:string){
         this.id = id;
@@ -25,6 +27,7 @@ export class SolicitudLibro{
         this.idUser = 0;
         this.idEditorial = 0;
         this.fechaAceptacion = '';
+        this.urlDownload = '';
     }
 
 
@@ -78,17 +81,27 @@ export class SolicitudLibro{
             let nombreArchivo = '';
             if(this.file!==''){
                 nombreArchivo = this.file;
-                var bin = Base64.atob(data);
-                fs.writeFile(nombreArchivo, bin, {encoding: 'base64'}, function(err) {
-                    console.log('File created');
-                });
+                await fs.writeFileSync('/tmp/archivos_libros_sa/'+nombreArchivo, data,{encoding: 'base64'});
+                await exec(`gsutil cp /tmp/archivos_libros_sa/${nombreArchivo} gs://bucke-sa/libros_sa`, (error: { message: any; }, stdout: any, stderr: any) => {
+                    if (error) {
+                      console.error(`error: ${error.message}`);
+                      return;
+                    }
+                  
+                    if (stderr) {
+                      console.error(`stderr: ${stderr}`);
+                      return;
+                    }
+                  
+                    console.log(`stdout:\n${stdout}`);
+                  });
             }
             let sql = `INSERT INTO solicitud_libro(nombre, autor, fec_primera_publicacion, nombre_archivo, id_cliente) `;
             sql += ` values ('${this.nombre}','${this.autor}','${this.fechaPublicacion}', '${nombreArchivo}', ${this.idUser}) ;`;
             const result = await query(sql);
             if(result.result!==null){
                 if(result.result.affectedRows>0){
-                    validador.ejecutado = true;
+                     validador.ejecutado = true;
                 }
                 return validador;
             }else{
@@ -96,7 +109,6 @@ export class SolicitudLibro{
                 validador.error = result.errorDescription;
                 return validador;
             }
-            return validador;
         } catch (error) {
             console.log('Error en guadarSolicitudLibro',error);
             validador.error = error;
@@ -119,6 +131,7 @@ export class SolicitudLibro{
                 this.autor = result.result[0].autor;
                 this.fechaPublicacion = result.result[0].fec_primera_publicacion;
                 this.file = result.result[0].nombre_archivo;
+                this.urlDownload = `https://storage.googleapis.com/bucke-sa/libros_sa/${this.file}`;
                 this.status = result.result[0].status;
                 this.idUser = result.result[0].id_cliente;
                 this.idEditorial = result.result[0].id_editorial;
