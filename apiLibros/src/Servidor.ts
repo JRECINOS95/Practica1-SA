@@ -31,7 +31,7 @@ export class Servidor {
         this.app = express();
         this.app.use(cors(this.options))
         this.app.use(bodyParser.json({limit: '50mb'}));
-        this.app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+        this.app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit:50000}));
         this.settings();
         this.middlewares();
         this.routes();
