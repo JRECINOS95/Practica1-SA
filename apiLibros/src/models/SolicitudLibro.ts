@@ -3,6 +3,7 @@ import { ResultadoEjecucion } from '../interface/ResultadoEjecucion';
 import { ResultQuery } from '../interface/ResultQuery';
 import {query, select} from '../utils/database';
 import fs from 'fs';
+import { Transaccion } from './Bitacora';
 const { exec } = require('child_process');
 
 
@@ -50,6 +51,8 @@ export class SolicitudLibro{
             }else if(tipo===2){ // se da de alta
                 sql = `UPDATE solicitud_libro SET status = 'ACTIVO' WHERE solicitud_libro = ${this.id};`
             }else if(tipo===3) { //se confirma la solicitud
+                const bitacora: Transaccion = new Transaccion(-1,this.idEditorial,'ACEPTA SOLICITUD');
+                bitacora.enviarBitacora();
                 sql = `UPDATE solicitud_libro SET status = 'ATENDIDO', fecha_aceptacion = now(), id_editorial = ${this.idEditorial}  WHERE solicitud_libro = ${this.id};`;
             }
 

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { URL_BITACORA } from "../utils/config";
+import { select } from "../utils/database";
 
 export class Transaccion{
     public idLibro:number;
@@ -12,8 +13,18 @@ export class Transaccion{
         this.operacion = operacion;
     }
 
-    enviarBitacora():boolean
+    async enviarBitacora(): Promise<boolean>
     {
+
+        if(this.idLibro === -1){
+            let query=`SELECT MAX(id_libro) as id FROM libro WHERE status !='INACTIVO';`;
+            const result = await select(query);
+            
+            if(result.result.length>0){
+                this.idLibro = result.result[0].id;
+            }
+        }
+
         try {
             axios.post(URL_BITACORA,{
                 idLibro: this.idLibro,
