@@ -1,0 +1,62 @@
+- hosts: practica
+  become: True
+  tasks:
+
+  - name: update
+    action: command apt-get update -y
+  - name: install java
+    action: command apt install openjdk-11-jdk -y
+  - name: java version
+    action: command java -version
+  - name: update
+    apt:
+      update_cache: yes
+  - name: ensure the jenkins apt repository key is installed
+    apt_key: url=https://pkg.jenkins.io/debian-stable/jenkins.io.key state=present
+    become: yes
+
+  - name: ensure the repository is configured
+    apt_repository: repo='deb https://pkg.jenkins.io/debian-stable binary/' state=present
+    become: yes
+
+  - name: ensure jenkins is installed
+    apt: name=jenkins update_cache=yes
+    become: yes
+
+  - name: ensure jenkins is running
+    service: name=jenkins state=started
+  
+
+  - name: Install required system packages
+    apt: name={{ item }} state=latest update_cache=yes
+    loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'gnupg', 'lsb-release']
+
+  - name: Add Docker GPG apt Key
+    apt_key:
+      url: https://download.docker.com/linux/debian/gpg
+      state: present
+
+  - name: ensure the repository is configured
+    apt_repository: repo='deb [arch=amd64] https://download.docker.com/linux/debian buster stable' state=present
+    become: yes
+
+  - name: update docker repository
+    apt: update_cache=yes
+    become: yes
+     
+  - name: Install docker-ce
+    apt: 
+      name:  ['docker-ce', 'docker-ce-cli', 'containerd.io']
+      
+  - name: update docker repository
+    apt: update_cache=yes
+    become: yes
+    
+  - name: ensure docker is running
+    service: name=docker state=started
+
+  - name: Ensure docker-compose is installed and available
+    get_url:
+      url: https://github.com/docker/compose/releases/download/1.22.0/docker-compose-{{ ansible_system }}-{{ ansible_userspace_architecture }}
+      dest: /usr/local/bin/docker-compose
+      mode: 'u+x,g+x'
