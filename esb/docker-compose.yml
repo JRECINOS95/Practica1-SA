@@ -1,0 +1,11 @@
+version: '3.2'
+services:
+  esb:
+    container_name: esb
+    build: '.'
+    env_file: .env
+    restart: always
+    depends_on:
+      - esb_database
+    ports:
+      - "5050:80"
