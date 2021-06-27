@@ -18,7 +18,7 @@ export class Factura{
         html_to_pdf.generatePdf(file, options).then((pdfBuffer: any) => {
             let mailDetails = {
                 from: "booksa@noreply.com",
-                to: "ihpam25@gmail.com",
+                to: "usac.proyectos.2021@gmail.com",
                 subject: "Factura de Compra de Libro",
                 html: "<center><h2>Gracias por su compra!!</h2></center><h4>Adjunto, encontrará su factura.</h4>",
                 attachments: [
