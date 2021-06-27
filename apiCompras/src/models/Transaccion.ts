@@ -2,6 +2,7 @@
 import { ResultadoEjecucion } from '../interface/ResultadoEjecucion';
 import { ResultQuery } from '../interface/ResultQuery';
 import {query, select} from '../utils/database';
+import { Factura } from './Factura';
 
 export class Transaccion{
     public id:number;
@@ -43,6 +44,13 @@ export class Transaccion{
                     await query(`update libro set stock = stock - ${this.cantidad} where id_libro = ${this.idLibro};`)
                     await query(`insert into medio_envio(id_transaccion,direccion) values(${result.result.insertId},'${direccion}');`)
                     validador.ejecutado = true;
+                    this.id = result.result.insertId;
+                    const factura:Factura = new Factura();
+
+                    const user = await select(`select primer_nombre, primer_apellido from usuario where id_user = ${this.idUser}`)
+                    const libro = await select(`select nombre from libro where id_libro = ${this.idLibro}`)
+                    const nombre:string = user.result[0].primer_nombre + ' ' + user.result[0].primer_apellido;
+                    factura.generarFactura(this,nombre,libro.result[0].nombre);
                 }
                 return validador;
             }else{
@@ -57,4 +65,6 @@ export class Transaccion{
             return validador;
         }
     }
+    
 }
+
