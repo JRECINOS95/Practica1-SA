@@ -34,9 +34,20 @@ export class Factura{
                 port: 587,
                 auth: {
                   user: 'usac.proyectos.2021@gmail.com',
-                  pass: 'Abc123**',
+                  pass: 'vpbnyrfpoeuukfli',
                 },
               });
+
+            // let mailTransporter = nodemailer.createTransport({
+            //     host: 'smtp.gmail.com',
+            //     port: 465,
+            //     secure: true,
+            //     auth: {
+            //         type: 'OAuth2',
+            //         user: 'usac.proyectos.2021@gmail.com',
+            //         accessToken: 'vpbnyrfpoeuukfli'
+            //     }
+            // });
 
             mailTransporter.sendMail(mailDetails, function (err:any, data:any) {
                 if (err) {
