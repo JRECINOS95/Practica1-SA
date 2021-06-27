@@ -29,13 +29,14 @@ export class Factura{
                 ]
             };
 
-            let mailTransporter = nodemailer.createTransport({
-                service: "gmail",
+            const mailTransporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 587,
                 auth: {
-                    user:"usac.proyectos.2021@gmail.com",
-                    pass: "Abc123**",
+                  user: 'usac.proyectos.2021@gmail.com',
+                  pass: 'Abc123**',
                 },
-            });
+              });
 
             mailTransporter.sendMail(mailDetails, function (err:any, data:any) {
                 if (err) {
