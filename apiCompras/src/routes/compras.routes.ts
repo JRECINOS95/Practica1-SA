@@ -1,9 +1,13 @@
 import { Router } from 'express';
-import { registrarCompra } from '../controllers/compras.controller';
+import { actualizarEnvio, getTracking, registrarCompra } from '../controllers/compras.controller';
 
 const router = Router();
 
 router.route('/')
         .post(registrarCompra);
+
+router.route('/tracking')
+        .get(getTracking)
+        .put(actualizarEnvio);
 
 export default router;

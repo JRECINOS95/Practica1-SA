@@ -1,6 +1,5 @@
 'use strict';
 import { ResultadoEjecucion } from '../interface/ResultadoEjecucion';
-import { ResultQuery } from '../interface/ResultQuery';
 import {query, select} from '../utils/database';
 import { Factura } from './Factura';
 
