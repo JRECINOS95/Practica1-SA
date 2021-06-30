@@ -44,6 +44,47 @@ export async function getTracking(req:Request, res:Response): Promise<Response> 
             .json(excepcion)
 }
 
+export async function getTrackingCliente(req:Request, res:Response): Promise<Response> {
+    const excepcion:Excepcion = {
+        Code: 999,
+        ErrorType: 'DES',
+        Message: ''
+    };
+    try {
+        const result = await select(`select m.status, t.cantidad, t.valor_final, l.nombre as libro from transaccion t inner join libro l on l.id_libro = t.id_libro inner join medio_envio m on m.id_transaccion = t.id_transaccion WHERE t.id_user = ${req.params.cliente};`);
+        const lista:Array<any> = new Array<any>();
+        if(result.execute){
+            for (let element of result.result){
+                let valor = 20;
+                if(element.status==='EN PROCESO') valor = 40;
+                else if(element.status==='DESPACHADO') valor = 60;
+                else if(element.status==='EN RUTA') valor = 80;
+                else if(element.status==='ENTREGADO') valor = 100;
+
+                lista.push({
+                    status: element.status,
+                    cantidad: element.cantidad,
+                    valor_final: element.valor_final,
+                    libro: element.libro,
+                    valor: valor,
+                });
+            }
+            return res.json(lista);
+        }else{
+            excepcion.Message = 'Error al ejecutar la consulta'
+            excepcion.Code = 3
+            excepcion.ErrorType = 'NEG'
+        }
+    } catch(error) {
+        excepcion.Code = 999
+        excepcion.ErrorType = 'DES'
+        excepcion.Message = error
+    }
+
+    return res
+            .status(400)
+            .json(excepcion)
+}
 
 
 export async function actualizarEnvio(req:Request, res:Response): Promise<Response> {
