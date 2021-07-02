@@ -19,11 +19,7 @@ namespace ESB.Controllers
     [ApiController]
     public class EsbController : Controller
     {
-        /// <summary>
-        /// Metodo general para realizar solicitud GET
-        /// </summary>
-        /// <param name="baseURL">URL del Servicio que se va a consultar</param>
-        /// <returns>Un String con el JSON obtenido en la consulta</returns>
+
         private string RequestGet(String baseURL, String bodyContent)
         {
             WebRequest request = WebRequest.Create(baseURL);
@@ -54,12 +50,7 @@ namespace ESB.Controllers
             return data;
         }
 
-        /// <summary>
-        /// Metodo general para realizar solicitud POST, PUT, DELETE
-        /// </summary>
-        /// <param name="baseURL">URL del Servicio que se va a consultar</param>
-        /// <param name="method">Valor si será POST,PUT,DELETE</param>
-        /// <returns>Un String con el JSON obtenido en la consulta</returns
+
         private async Task<ResultRequest> RequestPostPutDeleteAsync(String baseURL, String method, dynamic bodyContent)
         {
             ResultRequest resultado;
@@ -121,42 +112,133 @@ namespace ESB.Controllers
             }
         }
 
-        /// <summary>
-        /// Metodo POST general para la recepcion de solicitud de este tipo, se tiene el valor {api} y {funcionalidad} como el verbo del servicio que se va a consumir
-        /// </summary>
-        /// <param name="api">Verbo del nombre maquillado del servicio que se desea consumir</param>
-        /// <param name="funcionalidad">Verbo del nombre maquillado de la funcionalidad del API que se desea consumir</param>
-        /// <param name="email">parametro de email</param>
-        /// <param name="password">parametro de password</param>
-        /// <returns></returns>
-        [HttpGet, Route("/grupo19/{api}/{valor}")]
-        public ActionResult<IEnumerable<String>> GetRequestParams(String api,String valor)
+
+        [HttpGet, Route("/grupo19/{api}/{valor}/{grupo}")]
+        public ActionResult<IEnumerable<String>> GetRequestParams(String api, String valor, String grupo)
         {
-            DotNetEnv.Env.Load("../.env");
-
-            Console.WriteLine("");
-            Console.WriteLine("Ingreso a " + api+"/" + valor + "por metodo GET");
-
-            //Console.WriteLine(DotNetEnv.Env.GetString("DB_USER_PROD", "NO SE OBTUVO EL KEY DEL .env"));
-            String user = DotNetEnv.Env.GetString("DB_USER_PROD", "esb_user");
-            ManejadorRutas rutas = new ManejadorRutas(user, "GET");
-            if (!rutas.existeAcceso(api,"GET"))
-                return new BadRequestResult();
-
-            string baseURL = rutas.getURL(api, valor, "", "");
-            Console.WriteLine("RutaBase= " + baseURL);
             try
             {
-                String data = RequestGet(baseURL, "");
-                if (data != null)
+                DotNetEnv.Env.Load("../.env");
+                Console.WriteLine("");
+                Console.WriteLine("Ingreso a " + api + "/" + valor + "por metodo GET");
+                string baseURL = "";
+
+                //Console.WriteLine(DotNetEnv.Env.GetString("DB_USER_PROD", "NO SE OBTUVO EL KEY DEL .env"));
+                String user = DotNetEnv.Env.GetString("DB_USER_PROD", "esb_user");
+                
+
+                if (api == "libroseditorial" && grupo == "GRUPO17")
                 {
-                    return Content(data, "application/json");
+                    baseURL = "http://18.118.111.108:3636/api/products";
+                    Console.WriteLine("RutaBase= " + baseURL);
+                    String resultado = RequestGet(baseURL, "");
+                    dynamic data = JsonConvert.DeserializeObject<dynamic>(resultado);
+                    List<dynamic> listado = new List<dynamic>();
+
+                    foreach (dynamic element in data.products)
+                    {
+                        if (element.stock > 0 && element.proveedor == 1)
+                        {
+                            dynamic convertido = new ExpandoObject();
+                            convertido.id = element.id;
+                            convertido.nombre = element.nombre;
+                            convertido.url = element.imagen;
+                            convertido.autor = "";
+                            convertido.status = "ACTIVO";
+                            convertido.stock = element.stock;
+                            convertido.idUser = element.proveedor;
+                            convertido.precio = element.precio_cliente;
+                            convertido.generos = new List<string>();
+                            listado.Add(convertido);
+                        }
+                    }
+                    return Content(JsonConvert.SerializeObject(listado), "application/json");
+                }
+                else if (api == "libroseditorial" && grupo == "GRUPO18")
+                {
+                    baseURL = "http://157.230.218.35:9000/api/";
+                    Console.WriteLine("RutaBase= " + baseURL);
+                    String resultado = RequestGet(baseURL, "");
+                    dynamic data = JsonConvert.DeserializeObject<dynamic>(resultado);
+                    List<dynamic> listado = new List<dynamic>();
+
+                    foreach (dynamic element in data)
+                    {
+                        if (element.cantidad > 0 && element.editorial ==3)
+                        {
+                            dynamic convertido = new ExpandoObject();
+                            convertido.id = element.idl;
+                            convertido.nombre = element.nombre;
+                            convertido.url = element.imagen;
+                            convertido.autor = element.autor;
+                            convertido.status = "ACTIVO";
+                            convertido.stock = element.cantidad;
+                            convertido.idUser = element.editorial;
+                            convertido.precio = element.precio;
+                            convertido.generos = new List<string>();
+                            listado.Add(convertido);
+                        }
+                    }
+                    return Content(JsonConvert.SerializeObject(listado), "application/json");
+                }
+                else if ((api == "libroseditorial" || api == "libroget") && grupo == "GRUPO19")
+                {
+                    ManejadorRutas rutas = new ManejadorRutas(user, "GET");
+                    if (!rutas.existeAcceso(api, "GET"))
+                        return new BadRequestResult();
+                    baseURL = rutas.getURL(api, valor, "", "");
+                    Console.WriteLine("RutaBase= " + baseURL);
+                    String data = RequestGet(baseURL, "");
+                    if (data != null)
+                    {
+                        return Content(data, "application/json");
+                    }
+                    else
+                    {
+                        return new BadRequestResult();
+                    }
+                }
+                else if (api == "libroget" && grupo == "GRUPO17")
+                {
+                    baseURL = "http://18.118.111.108:3636/api/products/"+valor;
+                    Console.WriteLine("RutaBase= " + baseURL);
+                    String resultado = RequestGet(baseURL, "");
+                    dynamic element = JsonConvert.DeserializeObject<dynamic>(resultado);
+                    dynamic convertido = new ExpandoObject();
+                    convertido.id = element.id;
+                    convertido.nombre = element.nombre;
+                    convertido.url = element.imagen;
+                    convertido.autor = "";
+                    convertido.status = "ACTIVO";
+                    convertido.stock = element.stock;
+                    convertido.idUser = element.proveedor;
+                    convertido.precio = element.precio_cliente;
+                    convertido.generos = new List<string>();
+                    return Content(JsonConvert.SerializeObject(convertido), "application/json");
+                }
+                else if (api == "libroget" && grupo == "GRUPO18")
+                {
+                    baseURL = "http://157.230.218.35:9000/api/libro/" + valor;
+                    Console.WriteLine("RutaBase= " + baseURL);
+                    String resultado = RequestGet(baseURL, "");
+                    dynamic element = JsonConvert.DeserializeObject<dynamic>(resultado);
+                    element = element[0];
+                    dynamic convertido = new ExpandoObject();
+                    convertido.id = element.idl;
+                    convertido.nombre = element.nombre;
+                    convertido.url = element.imagen;
+                    convertido.autor = element.autor;
+                    convertido.status = "ACTIVO";
+                    convertido.stock = element.cantidad;
+                    convertido.idUser = 3;
+                    convertido.precio = element.precio;
+                    convertido.generos = new List<string>();
+                    return Content(JsonConvert.SerializeObject(convertido), "application/json");
                 }
                 else
                 {
                     return new BadRequestResult();
                 }
-
             }
             catch (Exception exception)
             {
@@ -165,13 +247,115 @@ namespace ESB.Controllers
             }
         }
 
-        /// <summary>
-        /// Metodo POST general para la recepcion de solicitud de este tipo, se tiene el valor {api} y {funcionalidad} como el verbo del servicio que se va a consumir
-        /// </summary>
-        /// <param name="api">Verbo del nombre maquillado del servicio que se desea consumir</param>
-        /// <param name="funcionalidad">Verbo del nombre maquillado de la funcionalidad del API que se desea consumir</param>
-        /// <param name="value">valor que se estara agregando para concatenarlo en la URL</param>
-        /// <returns></returns>
+        [HttpGet, Route("/grupo19/{api}/{valor}")]
+        public ActionResult<IEnumerable<String>> GetRequestParams(String api,String valor)
+        {
+            try
+            {
+                DotNetEnv.Env.Load("../.env");
+                Console.WriteLine("");
+                Console.WriteLine("Ingreso a " + api + "/" + valor + "por metodo GET");
+                string baseURL = "";
+
+                //Console.WriteLine(DotNetEnv.Env.GetString("DB_USER_PROD", "NO SE OBTUVO EL KEY DEL .env"));
+                String user = DotNetEnv.Env.GetString("DB_USER_PROD", "esb_user");
+                ManejadorRutas rutas = new ManejadorRutas(user, "GET");
+
+                if (api=="librolist" && valor == "GRUPO17")
+                {
+                    baseURL = "http://18.118.111.108:3636/api/products";
+                    Console.WriteLine("RutaBase= " + baseURL);
+                    String resultado = RequestGet(baseURL, "");
+                    dynamic data = JsonConvert.DeserializeObject<dynamic>(resultado);
+                    List<dynamic> listado = new List<dynamic>();
+
+                    foreach(dynamic element in data.products)
+                    {
+                        if(element.stock > 0)
+                        {
+                            dynamic convertido = new ExpandoObject();
+                            convertido.id = element.id;
+                            convertido.nombre = element.nombre;
+                            convertido.url = element.imagen;
+                            convertido.autor = "";
+                            convertido.status = "ACTIVO";
+                            convertido.stock = element.stock;
+                            convertido.idUser = element.proveedor;
+                            convertido.precio = element.precio_cliente;
+                            convertido.generos = new List<string>();
+                            listado.Add(convertido);
+                        }
+                    }
+                    return Content(JsonConvert.SerializeObject(listado), "application/json");
+                }
+                else if(api=="librolist" && valor == "GRUPO18")
+                {
+                    baseURL = "http://157.230.218.35:9000/api/";
+                    Console.WriteLine("RutaBase= " + baseURL);
+                    String resultado = RequestGet(baseURL, "");
+                    dynamic data = JsonConvert.DeserializeObject<dynamic>(resultado);
+                    List<dynamic> listado = new List<dynamic>();
+
+                    foreach (dynamic element in data)
+                    {
+                        if (element.cantidad > 0)
+                        {
+                            dynamic convertido = new ExpandoObject();
+                            convertido.id = element.idl;
+                            convertido.nombre = element.nombre;
+                            convertido.url = element.imagen;
+                            convertido.autor = element.autor;
+                            convertido.status = "ACTIVO";
+                            convertido.stock = element.cantidad;
+                            convertido.idUser = element.editorial;
+                            convertido.precio = element.precio;
+                            convertido.generos = new List<string>();
+                            listado.Add(convertido);
+                        }
+                    }
+                    return Content(JsonConvert.SerializeObject(listado), "application/json");
+                }
+                else if (api == "librolist" && valor == "GRUPO19")
+                {
+                    if (!rutas.existeAcceso(api, "GET"))
+                        return new BadRequestResult();
+                    baseURL = rutas.getURL(api, "", "", "");
+                    Console.WriteLine("RutaBase= " + baseURL);
+                    String data = RequestGet(baseURL, "");
+                    if (data != null)
+                    {
+                        return Content(data, "application/json");
+                    }
+                    else
+                    {
+                        return new BadRequestResult();
+                    }
+                }
+                else
+                {
+                    if (!rutas.existeAcceso(api, "GET"))
+                        return new BadRequestResult();
+                    baseURL = rutas.getURL(api, valor, "", "");
+                    Console.WriteLine("RutaBase= " + baseURL);
+                    String data = RequestGet(baseURL, "");
+                    if (data != null)
+                    {
+                         return Content(data, "application/json");
+                    }
+                    else
+                    {
+                         return new BadRequestResult();
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                return BadRequest(exception.Message);
+            }
+        }
+
+
         [HttpGet, Route("/grupo19/{api}")]
         public async Task<ActionResult<IEnumerable<string>>> GetRequestValueAsync(String api)
         {
@@ -214,13 +398,6 @@ namespace ESB.Controllers
             }
         }
 
-        /// <summary>
-        /// Metodo POST general para la recepcion de solicitud de este tipo, se tiene el valor {api} y {funcionalidad} como el verbo del servicio que se va a consumir
-        /// </summary>
-        /// <param name="api">Verbo del nombre maquillado del servicio que se desea consumir</param>
-        /// <param name="funcionalidad">Verbo del nombre maquillado de la funcionalidad del API que se desea consumir</param>
-        /// <param name="bodyContent">Contenido del POST obtenido</param>
-        /// <returns>Retorna el resultado de la consulta correcta o fallida</returns>
         [HttpPost, Route("/grupo19/{api}/{funcionalidad}")]
         public async Task<IActionResult> UrlPost(String api, String funcionalidad, [FromBody] dynamic bodyContent)
         {
@@ -362,32 +539,6 @@ namespace ESB.Controllers
             return new BadRequestResult();
         }
 
-        /// <summary>
-        /// Metodo PUT general para la recepcion de solicitud de este tipo, se tiene el valor {api} y {funcionalidad} como el verbo del servicio que se va a consumir
-        /// </summary>
-        /// <param name="api">Verbo del nombre maquillado del servicio que se desea consumir</param>
-        /// <param name="funcionalidad">Verbo del nombre maquillado de la funcionalidad del API que se desea consumir</param>
-        /// <param name="bodyContent">Contenido del POST obtenido</param>
-        /// <param name="value">valor que se estara agregando para concatenarlo en la URL</param>
-        /// <returns>Retorna el resultado de la consulta correcta o fallida</returns>
-        [HttpPut, Route("/grupo19/{api}/{funcionalidad}")]
-        public async Task<IActionResult> UrlPut(String api, String funcionalidad, [FromBody] dynamic bodyContent)
-        {
-            DotNetEnv.Env.Load("../.env");
-
-            Console.WriteLine("");
-            Console.WriteLine("Ingreso a " + api + "/" + funcionalidad + "por metodo PUT");
-
-            String user = DotNetEnv.Env.GetString("DB_USER_PROD", "esb_user");
-            ManejadorRutas rutas = new ManejadorRutas(user, "PUT");
-            if (!rutas.existeAcceso(api + "." + funcionalidad, "PUT"))
-                return new BadRequestResult();
-
-            string baseURL = rutas.getURL(api + "." + funcionalidad, "", "", "");
-            Console.WriteLine("RutaBase= " + baseURL);
-
-            return await RequestPostPutDeleteAsync(baseURL, "PUT", bodyContent);
-        }
     }
 }
 
