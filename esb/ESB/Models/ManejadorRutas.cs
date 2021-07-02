@@ -33,11 +33,13 @@ namespace ESB.Models
         private void CargarRutas(String metodo)
         {
             rutas = new List<Ruta>();
-            DataTable tableRutas = conn.getTableByQuery("select Llave,Ruta,RutaId from Ruta where Tipo='" + metodo+"' and status = 'ACTIVO';", "esb");
+            DataTable tableRutas = conn.getTableByQuery("select Llave,Ruta,RutaId from Ruta where Tipo='" 
+                + metodo+"' and status = 'ACTIVO';", "esb");
             foreach(DataRow row in tableRutas.Rows)
             {
                 List<String> parametros = new List<string>();
-                DataTable tableParametros = conn.getTableByQuery("select Nombre from RutaParametro where status = 'ACTIVO' and RutaId=" + row[2].ToString() + ";", "esb");
+                DataTable tableParametros = conn.getTableByQuery("select Nombre from RutaParametro where status = 'ACTIVO' and RutaId="
+                    + row[2].ToString() + ";", "esb");
                 foreach (DataRow param in tableParametros.Rows)
                 {
                     parametros.Add(param[0].ToString());
