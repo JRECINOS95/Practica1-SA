@@ -129,7 +129,7 @@ namespace ESB.Controllers
 
                 if (api == "libroseditorial" && grupo == "GRUPO17")
                 {
-                    baseURL = "http://18.118.111.108:3636/api/products";
+                    baseURL = "http://18.118.111.108:3636/api/products?limit=100";
                     Console.WriteLine("RutaBase= " + baseURL);
                     String resultado = RequestGet(baseURL, "");
                     dynamic data = JsonConvert.DeserializeObject<dynamic>(resultado);
@@ -263,7 +263,7 @@ namespace ESB.Controllers
 
                 if (api=="librolist" && valor == "GRUPO17")
                 {
-                    baseURL = "http://18.118.111.108:3636/api/products";
+                    baseURL = "http://18.118.111.108:3636/api/products?limit=100";
                     Console.WriteLine("RutaBase= " + baseURL);
                     String resultado = RequestGet(baseURL, "");
                     dynamic data = JsonConvert.DeserializeObject<dynamic>(resultado);
@@ -592,7 +592,7 @@ namespace ESB.Controllers
                     dynamic flexible = new ExpandoObject();
 
                     flexible.id_usuario = json["idUser"].ToString();
-                    flexible.fecha = new DateTime().ToString();
+                    flexible.fecha = new DateTime().ToString("yyyy/MM/dd");
                     bodyContent = JsonConvert.SerializeObject(flexible);
                     baseURL = "http://157.230.218.35:3600/api/ordenes";
                     Console.WriteLine("RutaBase= " + baseURL);
