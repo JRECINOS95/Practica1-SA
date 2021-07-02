@@ -467,6 +467,52 @@ namespace ESB.Controllers
                     }
                     return BadRequest(resultado.strError);
                 }
+                else if (api == "libro" && funcionalidad == "add")
+                {
+                    dynamic flexible = new ExpandoObject();
+                    flexible.id = 0;
+                    flexible.category = "";
+                    flexible.imagen = json["url"].ToString();
+                    flexible.images = "";
+                    flexible.nombre = json["nombre"].ToString();
+                    flexible.precio_cliente = json["precio"].ToString();
+                    flexible.proveedor = 1;
+                    flexible.stock = json["stock"].ToString();
+                    flexible.valor_unitario = json["precio"].ToString();
+                    bodyContent = JsonConvert.SerializeObject(flexible);
+                    baseURL = "http://18.118.111.108:3636/api/prodproveedor/agregar";
+                    Console.WriteLine("RutaBase= " + baseURL);
+                    ResultRequest resultado = await RequestPostPutDeleteAsync(baseURL, "POST", bodyContent);
+                    if (!resultado.error)
+                    {
+                        return Content(resultado.httpContent, "application/json");
+                    }
+                    return BadRequest(resultado.strError);
+                }
+                else if (api == "compra" && funcionalidad == "ingresar")
+                {
+                    dynamic flexible = new ExpandoObject();
+
+                    flexible.userId = json["idUser"].ToString();
+                    flexible.products = new List<dynamic>();
+
+                    dynamic producto = new ExpandoObject();
+                    producto.codigo = json["idLibro"].ToString();
+                    producto.incart = json["cantidad"].ToString();
+                    producto.id = json["idLibro"].ToString();
+
+                    flexible.products.Add(producto);
+
+                    bodyContent = JsonConvert.SerializeObject(flexible);
+                    baseURL = "http://18.118.111.108:3636/api/orders/new";
+                    Console.WriteLine("RutaBase= " + baseURL);
+                    ResultRequest resultado = await RequestPostPutDeleteAsync(baseURL, "POST", bodyContent);
+                    if (!resultado.error)
+                    {
+                        return Content(resultado.httpContent, "application/json");
+                    }
+                    return BadRequest(resultado.strError);
+                }
             }
             else if(grupo == "GRUPO18")
             {
@@ -511,6 +557,44 @@ namespace ESB.Controllers
                     flexible.tipo = "1";
                     bodyContent = JsonConvert.SerializeObject(flexible);
                     baseURL = "http://157.230.218.35:3000/api/signup";
+                    Console.WriteLine("RutaBase= " + baseURL);
+                    ResultRequest resultado = await RequestPostPutDeleteAsync(baseURL, "POST", bodyContent);
+                    if (!resultado.error)
+                    {
+                        return Content(resultado.httpContent, "application/json");
+                    }
+                    return BadRequest(resultado.strError);
+                }
+                else if (api == "libro" && funcionalidad == "add")
+                {
+                    dynamic flexible = new ExpandoObject();
+                    flexible.nombre = json["nombre"].ToString();
+                    flexible.autor = json["autor"].ToString();
+                    flexible.precio = json["precio"].ToString();
+                    flexible.cantidad = json["stock"].ToString();
+                    flexible.estado = 1;
+                    flexible.imagen = json["url"].ToString();
+                    flexible.editorial = 3;
+                    flexible.generos = new List<string>();
+
+                    bodyContent = JsonConvert.SerializeObject(flexible);
+                    baseURL = "http://157.230.218.35:9000/api/";
+                    Console.WriteLine("RutaBase= " + baseURL);
+                    ResultRequest resultado = await RequestPostPutDeleteAsync(baseURL, "POST", bodyContent);
+                    if (!resultado.error)
+                    {
+                        return Content(resultado.httpContent, "application/json");
+                    }
+                    return BadRequest(resultado.strError);
+                }
+                else if (api == "compra" && funcionalidad == "ingresar")
+                {
+                    dynamic flexible = new ExpandoObject();
+
+                    flexible.id_usuario = json["idUser"].ToString();
+                    flexible.fecha = new DateTime().ToString();
+                    bodyContent = JsonConvert.SerializeObject(flexible);
+                    baseURL = "http://157.230.218.35:3600/api/ordenes";
                     Console.WriteLine("RutaBase= " + baseURL);
                     ResultRequest resultado = await RequestPostPutDeleteAsync(baseURL, "POST", bodyContent);
                     if (!resultado.error)
