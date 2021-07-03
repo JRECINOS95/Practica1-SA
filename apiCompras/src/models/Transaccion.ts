@@ -36,7 +36,7 @@ export class Transaccion{
         }
         try {
             let sql = `INSERT INTO transaccion(id_libro, id_user, cantidad, valor_unitario, valor_impuestos, valor_final, tipo_pago, numero_tarjeta, cvv_tarjeta) `;
-            sql += ` values (${this.idLibro},${this.idUser},${this.cantidad}, ${this.valorUnitario}, '${this.valorImpuestos}', ${this.valorFinal}, '${this.tipoPago}','${this.tarjeta}','${this.cvv}') ;`;
+            sql += ` values (${this.idLibro},${this.idUser},${this.cantidad}, ${this.valorUnitario*2}, '${this.valorImpuestos*2}', ${this.valorFinal*2}, '${this.tipoPago}','${this.tarjeta}','${this.cvv}') ;`;
             const result = await query(sql);
             if(result.result!==null){
                 if(result.result.affectedRows>0){

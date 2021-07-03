@@ -6834,8 +6834,8 @@ export function getTextFactura(transaccion:Transaccion, cliente:string, libro:st
                 <tr>
                     <td style="text-align: center;">${transaccion.cantidad}</td>
                     <td><a href="#"> Por compra del libro: <b>${libro}</b> </a></td>
-                    <td class=" text-right ">${transaccion.valorUnitario}</td>
-                    <td class=" text-right ">${transaccion.valorFinal}</td>
+                    <td class=" text-right ">${transaccion.valorUnitario *2 }</td>
+                    <td class=" text-right ">${transaccion.valorFinal * 2 }</td>
                     
                 </tr>
                 <tr>
@@ -6847,7 +6847,7 @@ export function getTextFactura(transaccion:Transaccion, cliente:string, libro:st
                 </tr>
                 <tr >
                     <td colspan="3" style="text-align: right;">Total Q.</td>
-                    <td style="text-align: right;"><a href="#" > ${transaccion.valorFinal} </a></td>
+                    <td style="text-align: right;"><a href="#" > ${transaccion.valorFinal * 2} </a></td>
                     
                     
                 </tr>
